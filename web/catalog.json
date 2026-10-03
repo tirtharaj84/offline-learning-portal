@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "resources": [
+    {
+      "title": "01 - Set up and access your portal",
+      "category": "Portal guides",
+      "language": "English",
+      "source": "Tirtharaj Dhungana - original portal guidance",
+      "rights": "MIT licence; Copyright 2026 Tirtharaj Dhungana",
+      "description": "First installation, LAN access, restart checks and safe removal.",
+      "type": "PDF",
+      "url": "/resources/Portal%20guides/01_Setup_and_Access.pdf"
+    },
+    {
+      "title": "02 - Add and organise learning resources",
+      "category": "Portal guides",
+      "language": "English",
+      "source": "Tirtharaj Dhungana - original portal guidance",
+      "rights": "MIT licence; Copyright 2026 Tirtharaj Dhungana",
+      "description": "A ten-page beginner workbook: Explorer, Notepad, HTML, CSS, JavaScript, media, metadata and optional Python.",
+      "type": "PDF",
+      "url": "/resources/Portal%20guides/02_Add_and_Organise_Resources.pdf"
+    },
+    {
+      "title": "03 - Extend with Kiwix and advanced resources",
+      "category": "Portal guides",
+      "language": "English",
+      "source": "Tirtharaj Dhungana - original portal guidance",
+      "rights": "MIT licence; Copyright 2026 Tirtharaj Dhungana",
+      "description": "Ten-page beginner Kiwix walkthrough: downloads, folders, manual test, firewall, NSSM, links, maintenance and removal.",
+      "type": "PDF",
+      "url": "/resources/Portal%20guides/03_Kiwix_and_Advanced_Resources.pdf"
+    }
+  ]
+}

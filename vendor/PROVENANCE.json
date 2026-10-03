@@ -1,0 +1,18 @@
+[
+  {
+    "download_url": "https://nginx.org/download/nginx-1.30.1.zip",
+    "checked_date": "2026-10-03",
+    "archive_sha256": "b77dd8d72ba6cf35afcae87775b5832a1e99175a2bac70338040340807dba7c2",
+    "member": "nginx-1.30.1/nginx.exe",
+    "supplied_binary_matches": true,
+    "binary_sha256": "e9c8ee81bf8d76c8a5b265a059cf8df24b883f3faf30f825601a94d61e8fffb0"
+  },
+  {
+    "download_url": "https://nssm.cc/release/nssm-2.24.zip",
+    "checked_date": "2026-10-03",
+    "archive_sha256": "727d1e42275c605e0f04aba98095c38a8e1e46def453cdffce42869428aa6743",
+    "member": "nssm-2.24/win64/nssm.exe",
+    "supplied_binary_matches": true,
+    "binary_sha256": "f689ee9af94b00e9e3f0bb072b34caaf207f32dcb4f5782fc9ca351df9a06c97"
+  }
+]

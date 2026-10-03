@@ -1,0 +1,13 @@
+{
+  "install_directory": "C:\\LearningPortal",
+  "hostname": "Portal",
+  "offer_computer_rename": true,
+  "http_port": 80,
+  "service_name": "OfflineLearningPortal",
+  "firewall_profiles": [
+    "Private",
+    "Domain"
+  ],
+  "firewall_remote_address": "LocalSubnet",
+  "enable_hostname_discovery_rules": true
+}

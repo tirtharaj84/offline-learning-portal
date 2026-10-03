@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "Please cite this software when using it in research."
+title: "Offline Learning Portal"
+type: software
+authors:
+  - family-names: "Dhungana"
+    given-names: "Tirtharaj"
+    email: "tirtharajdhungana84@gmail.com"
+version: "1.0.0"
+date-released: "2026-10-03"
+license: MIT
+abstract: "A Windows school LAN resource portal using NGINX and NSSM, with a local catalogue and three illustrated user guides."

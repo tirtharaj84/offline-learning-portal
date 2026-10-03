@@ -1,0 +1,1 @@
+Place your authorized PDFs/audio/video in category subfolders. Optional metadata: file.pdf.meta.json. Register only the entry HTML page of a complete local activity with index.html.meta.json. Run the catalogue generator after changes. This README is not catalogued.
