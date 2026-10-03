@@ -5,7 +5,7 @@ A small Windows school portal: NGINX serves a local catalogue and three illustra
 
 ## First installation
 1. Extract this ZIP into a working folder. This is a new installation; do not run it over your working portal.
-2. This testing copy already includes your supplied NGINX and NSSM executables, plus the NGINX configuration support files from your supporting ZIP. No separate executable download is needed for this test. See docs/DEPENDENCIES.md for provenance and publication notes.
+2. The package includes NGINX and NSSM executables and the required NGINX configuration support files. No separate executable download is needed. See docs/DEPENDENCIES.md for provenance and compatibility notes.
 3. Edit portal-settings.json before installation. Default destination is C:\LearningPortal, hostname Portal, HTTP port 80. Use a dedicated destination without spaces. Choose a unique school computer name (maximum 15 characters). A hostname alone does not configure DNS.
 4. Right-click Install.bat and select Run as administrator. Review the printed destination, service and firewall settings, then type YES. Installation refuses an existing destination, service or named firewall rules. An occupied port offers an alternative; existing services are not stopped.
 5. The script checks NGINX configuration, registers OfflineLearningPortal with automatic start and restart after application exit, adds firewall rules, starts the service, and checks the local catalogue. If offered a computer rename, type RENAME only if appropriate; otherwise press Enter. Renaming a domain-managed machine should be coordinated with its administrator. A rename requires a Windows restart.
@@ -25,7 +25,7 @@ In the installed portal, copy permitted files into C:\LearningPortal\web\resourc
 | docs/ | Dependencies, tailoring, operations and validation |
 | tests/ | Portable catalogue tests |
 
-The baseline has one web service. Kiwix is an optional additional service, not required for the main portal. NSSM is a service wrapper, not a scraper; this package does not scrape web content. Back up resources and verify permission to host them. The free MIT licensing plan is documented in LICENSE_STATUS.md.
+The baseline has one web service. Kiwix is an optional additional service, not required for the main portal. NSSM is a service wrapper, not a scraper; this package does not scrape web content. Back up resources and verify permission to host them. MIT licensing terms and dependency notice locations are documented in LICENSE_STATUS.md.
 
 
 ## Release documentation
@@ -43,7 +43,7 @@ Copy examples/lesson-starter into the installed web/resources/Activities folder,
 
 The optional Kiwix instructions have not been executed on Windows during preparation; test them separately. Its server is not bundled or automatically installed. Advanced reverse proxy instructions are a separate appendix and are unnecessary for the beginner direct-port setup.
 
-To update existing guides, back up the installed web folder, replace only these three PDFs and their metadata, and rebuild the installed catalogue. Keep school resources. Service reinstallation is unnecessary for content edits. Review docs/PUBLICATION.md before GitHub/Zenodo publication.
+To update existing guides, back up the installed web folder, replace only these three PDFs and their metadata, and rebuild the installed catalogue. Keep school resources. Service reinstallation is unnecessary for content edits. See docs/PUBLICATION.md for published release links and archive maintenance instructions.
 
 ## Creator and contact
 Tirtharaj Dhungana - [tirtharajdhungana84@gmail.com](mailto:tirtharajdhungana84@gmail.com). Original project files, manuals and lesson examples are MIT licensed. Third-party components and teacher-added content retain their own terms.
