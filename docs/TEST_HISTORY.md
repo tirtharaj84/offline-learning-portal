@@ -1,31 +1,114 @@
-# Implementation and testing history
+# Technical test history — v1.0.0
 
-Project: Offline Learning Portal. Consolidated candidate: 1.0.0-rc.1. Record date: 3 October 2026 (Nepal). Source of Windows observations: the project owner's conversation reports and copied console outputs, not independent access to the owner's computer.
+Record date: 3 October 2026, Nepal.
 
-## Design decisions
-The owner's earlier working portal used NGINX and Kiwix, NSSM-managed Windows services, hostname/IP access, firewall rules and a substantial collection of local educational resources. The new baseline retains local hosting and service management but replaces collection-specific dependencies with a generic catalogue and three original PDF demonstrations. Schools may add permitted PDFs, media or complete HTML resources. Kiwix and 3D viewers are optional integrations, not installed by this baseline. NSSM is a service wrapper, not a scraper. The project does not scrape websites.
+Windows observations were supplied by the project owner through reports and copied console output. Package preparation checks were performed separately.
 
-Default new installation: C:\LearningPortal; service OfflineLearningPortal; configured hostname Portal; TCP 80; inbound access limited to Private/Domain profiles and LocalSubnet. Python is needed to rebuild the catalogue, not to run the bundled initial portal. A separately confirmed computer rename is optional. Pressing Enter retains the existing name.
+Historical version labels below identify the revisions discussed during troubleshooting. They are not claims that each revision has a separate public release.
 
-## Observed issues, fixes and outcomes
-| Stage | Observation from the owner | Action and outcome |
+## Baseline configuration
+
+| Setting | Baseline value |
+|---|---|
+| Installation destination | `C:\LearningPortal` |
+| Windows service | `OfflineLearningPortal` |
+| Configured hostname | `Portal` |
+| HTTP port | TCP 80 |
+| Inbound firewall profiles | Private and Domain |
+| Inbound remote-address scope | LocalSubnet |
+| Web server | NGINX |
+| Windows service wrapper | NSSM |
+| Catalogue rebuilding | Python |
+| Initial browsing | Python not required |
+| Computer rename | Optional; separately confirmed |
+
+Pressing Enter at the rename prompt retains the existing computer name. A configured hostname does not establish DNS or other network name resolution.
+
+The baseline uses one web service. Kiwix and specialised resource viewers require separate configuration.
+
+## Issues, changes and recorded outcomes
+
+| Stage | Recorded issue or action | Change or outcome |
 |---|---|---|
-| Old portal cleanup | Owner successfully ran revised legacy rollback | Old C:\nginx deployment removed. Legacy cleanup was kept separately for office machines and removed from the new package. |
-| Browser showed old page | localhost still appeared to display old content after old cleanup | Port-80 query reported no matching listening connection. Cached/browser-managed content was suspected; no precise browser cause was established. |
-| Binary placement | Owner supplied nginx.exe and nssm.exe | Executables placed in vendor paths; NGINX configuration support files came from the owner's supporting ZIP. Binaries were not executed in the preparation environment. |
-| v0.1.1 path validation | Valid C:\LearningPortal rejected before installation changes | A wrongly escaped regular expression was corrected in v0.1.2. No cleanup required for that preflight rejection. |
-| v0.1.2 configuration test | Syntax passed; CreateDirectory temp/client_body_temp failed because parent was missing | v0.1.3 explicitly creates logs, temp and five default temporary subfolders before nginx -t. Partial installation was uninstalled/preserved, renamed, later deleted by owner. |
-| v0.1.3 installation | Copied console output reported successful nginx -t, service registration/settings and local catalogue HTTP health check | Installation success supported by console output. Owner pressed Enter at rename prompt, so no new computer rename was performed in this test. Printed Portal URL is not evidence of name resolution. |
-| LAN access | Owner reported access from mobile and other devices at http://10.122.200.253/ | IP-based access on the test LAN supported. That address is an observation, not a portable default or permanent address. |
-| Initial uninstall concern | Folder remained and content appeared accessible after BAT use | Default BAT kept files; owner was directed to installed PowerShell script with -DeleteFiles. Exact cause of the initial still-accessible page was not established. |
-| Full uninstall | Console output confirmed service removed and installed folder deleted after REMOVE and DELETE | PowerShell full-removal path successfully exercised. The output's deletion prompt omitted the folder text; owner still confirmed deletion. |
-| Uninstall menu | Owner requested full deletion through BAT | BAT now offers keep files / delete files / cancel and invokes the same PowerShell script. Included in owner's final ZIP. No separate copied console record demonstrates the menu branch itself. |
-| Browser discrepancy after removal | Chrome no longer loaded portal; Brave showed older content | Localhost-only storage/service-worker cleanup was suggested. The owner subsequently reported everything tested and working; no explicit Brave remediation result was provided. |
-| Final confirmation | Owner stated everything was tested and working properly and supplied the final ZIP | Record as overall owner acceptance; do not invent separate measurements or logs for checks not individually reported. |
+| Legacy portal cleanup | Owner ran the revised legacy rollback procedure | Owner reported removal of the old `C:\nginx` deployment |
+| Old page after cleanup | `localhost` appeared to display older content | A port-80 query reported no matching listening connection; the browser-specific cause was not established |
+| Executable placement | Owner supplied `nginx.exe` and `nssm.exe` | Executables were placed in the package vendor paths |
+| NGINX support files | Owner supplied a supporting ZIP | Required NGINX configuration support files were included |
+| v0.1.1 path validation | Valid `C:\LearningPortal` destination was rejected before installation changes | The incorrectly escaped regular expression was corrected in v0.1.2 |
+| v0.1.2 NGINX configuration check | Syntax passed, but creation of `temp/client_body_temp` failed because its parent directory was missing | v0.1.3 explicitly created `logs`, `temp` and the required temporary subdirectories before running `nginx -t` |
+| Partial installation cleanup | Owner removed or preserved the partial installation during troubleshooting | Owner subsequently renamed and deleted the retained directory |
+| v0.1.3 installation | Console output showed successful NGINX configuration checking, service registration/settings and a local catalogue HTTP check | Installation passed in the reported environment |
+| Rename prompt | Owner pressed Enter | Computer rename was skipped; the printed hostname URL did not verify name resolution |
+| LAN access | Owner reported successful access from mobile and other devices using the server IP address | IP-based LAN access passed |
+| Initial uninstall behaviour | Installed files remained after BAT use | The BAT then preserved files by default; the owner was directed to the PowerShell removal option |
+| Full uninstall | Console output showed removal of the service and installed directory after confirmation | Full removal passed |
+| Deletion prompt display | Directory text was omitted from the displayed deletion prompt | Owner confirmed deletion; output showed completion |
+| Uninstall menu revision | Owner requested full deletion through the BAT interface | The BAT was revised to offer keep files, delete files and cancel |
+| Uninstall menu branch execution | Revised menu was included in the submitted package | Separate copied output for each menu branch was not supplied |
+| Browser behaviour after removal | Chrome no longer loaded the portal; Brave displayed older content | Localhost storage/service-worker cleanup was suggested; exact Brave remediation was not recorded |
+| Occupied-port handling | Alternative-port handling was implemented | A separate occupied-port execution record was not supplied |
+| Final deployment acceptance | Owner reported that testing was completed and everything was working properly | Recorded as overall owner acceptance |
+| Published v1.0.0 archive review | Owner confirmed that the published archive passed review testing | Recorded as passed on owner confirmation; detailed per-check review logs were not supplied |
 
-## Interpretation for publication
-The evidence supports successful installation with a local catalogue health check, IP-based LAN access from more than one client, and full service/folder uninstall in the reported environment. It is a functional demonstration. It does not establish pedagogical effectiveness, curriculum alignment, benchmark performance, concurrent-user capacity, reliability across Windows versions or deployments across multiple schools.
+## Preparation checks
 
-The conversation's overall acceptance does not provide detailed per-check records for reboot persistence, deliberate application failure/recovery, hostname resolution, adding/rebuilding a resource, individual PDF/search behaviour or offline HTML dependencies. Mark these as owner acceptance without detailed evidence rather than as independently verified tests. Do not carry over original portal test results as new starter measurements.
+The package preparation record includes:
 
-Recorded environment: Windows PowerShell console and NGINX/NSSM Windows executables. Exact Windows edition/build, device models, client browser versions, network topology, number of concurrent clients and test durations were not supplied. Fill these from deployment notes if needed; do not infer them from unrelated account history.
+- Six passing catalogue tests:
+  - encoding and defaults;
+  - explicit HTML registration and ignored extensions;
+  - invalid metadata handling;
+  - preservation of the existing catalogue after an error;
+  - external symlink rejection;
+  - deterministic output.
+- Passing JavaScript syntax checks.
+- Successful temporary HTTP checks for the home page, catalogue and three guides.
+- PDF text extraction for guides containing 4, 10 and 10 pages.
+- Visual inspection of all 24 rendered PDF pages.
+- ZIP integrity checking.
+- Python media-path fixture checks, including a filename with spaces.
+- Registration of the lesson HTML sidecar and ordinary media entries in a temporary web-directory copy.
+- DOM simulation checks for answer visibility, shelf links and failed-fetch handling.
+
+PowerShell and the supplied Windows executables were not run in the preparation environment. A Playwright smoke test could not run because a browser executable was unavailable.
+
+## Evidence boundaries
+
+Supplied console output supports:
+
+- NGINX configuration checking;
+- service installation and startup;
+- local catalogue availability;
+- full service and directory removal.
+
+Owner reports support:
+
+- client access over the test LAN using the server IP address;
+- Chrome being unable to access the portal after removal;
+- overall deployment acceptance;
+- successful review testing of the published v1.0.0 archive.
+
+Separate individual records were not supplied for:
+
+- reboot persistence;
+- deliberate application failure and recovery;
+- hostname resolution;
+- every search/PDF interaction;
+- resource addition and rebuilding on Windows;
+- each uninstall menu branch;
+- an occupied-port installation;
+- browsing with internet connectivity disconnected.
+
+## Optional integration status
+
+Kiwix/ZIM hosting, optional reverse proxy routing and specialised viewers were not executed as part of the recorded baseline preparation checks.
+
+Their documentation does not constitute an execution result.
+
+## Environment details retained
+
+The supplied records identify Windows, Windows PowerShell, NGINX/NSSM Windows executables and access from mobile and other LAN devices.
+
+They do not specify the exact Windows edition/build, server hardware, client device models, browser versions, complete network topology, simultaneous client count or test durations.
+
+No missing environment details or measurements have been inferred.
