@@ -36,7 +36,7 @@ try {
         $port = $alternative
         $cfg.http_port = $port
     }
-    foreach ($rel in @('vendor\nginx\nginx.exe','vendor\nginx\conf\mime.types','vendor\nssm.exe','web\index.html','web\catalog.json','scripts\generate_catalog.py','docs\nginx-template.conf')) {
+    foreach ($rel in @('vendor\nginx\nginx.exe','vendor\nginx\conf\mime.types','vendor\nssm.exe','web\index.html','web\catalog.json','scripts\generate_catalog.py','docs\nginx-template.conf','LICENSE.txt','LICENSE_STATUS.md','THIRD_PARTY_NOTICES.md','vendor\PROVENANCE.json','vendor\nssm-notices\README.txt','vendor\nssm-notices\ChangeLog.txt')) {
         if (!(Test-Path -LiteralPath (Join-Path $package $rel) -PathType Leaf)) { throw "Package is missing $rel. See docs\DEPENDENCIES.md." }
     }
     Get-Content -Raw (Join-Path $package 'web\catalog.json') | ConvertFrom-Json | Out-Null
@@ -54,9 +54,11 @@ try {
     New-Item -ItemType Directory -Path (Join-Path $dest 'runtime') | Out-Null
     Copy-Item -LiteralPath (Join-Path $package 'vendor\nginx') -Destination (Join-Path $dest 'runtime\nginx') -Recurse
     Copy-Item -LiteralPath (Join-Path $package 'vendor\nssm.exe') -Destination (Join-Path $dest 'runtime\nssm.exe')
+    Copy-Item -LiteralPath (Join-Path $package 'vendor\nssm-notices') -Destination (Join-Path $dest 'runtime\nssm-notices') -Recurse
+    Copy-Item -LiteralPath (Join-Path $package 'vendor\PROVENANCE.json') -Destination (Join-Path $dest 'runtime\PROVENANCE.json')
     foreach ($dir in @('web','scripts','docs')) { Copy-Item -LiteralPath (Join-Path $package $dir) -Destination (Join-Path $dest $dir) -Recurse }
     $cfg | ConvertTo-Json -Depth 5 | Set-Content -Encoding UTF8 (Join-Path $dest 'portal-settings.json')
-    foreach ($file in @('Uninstall.bat','Rebuild_Catalog.bat','README.md','LICENSE_STATUS.md')) { Copy-Item -LiteralPath (Join-Path $package $file) -Destination $dest }
+    foreach ($file in @('Uninstall.bat','Rebuild_Catalog.bat','README.md','LICENSE_STATUS.md','LICENSE.txt','THIRD_PARTY_NOTICES.md','ACKNOWLEDGEMENTS.md','RELEASE_NOTES.md')) { Copy-Item -LiteralPath (Join-Path $package $file) -Destination $dest }
     $nginxDir = Join-Path $dest 'runtime\nginx'
     # Create runtime directories explicitly; empty folders can be lost in ZIPs.
     foreach ($relative in @('logs','temp','temp\client_body_temp','temp\proxy_temp','temp\fastcgi_temp','temp\uwsgi_temp','temp\scgi_temp')) {
