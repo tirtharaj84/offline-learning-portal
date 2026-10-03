@@ -1,59 +1,60 @@
 # Offline Learning Portal — v1.0.0
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23120387.svg)](https://doi.org/10.5281/zenodo.23120387)
 
-A small Windows school portal: NGINX serves a local catalogue and three illustrated user guides. NSSM runs NGINX automatically as a Windows service. Schools can add their own permitted resources without adopting the original portal's folder names or collections.
+A Windows-based school LAN site for serving a catalogue of locally stored learning resources. NGINX serves the portal and files; NSSM runs NGINX as a Windows service. A browser on the server or an allowed device on the school network can open the catalogue.
 
-## First installation
-1. Extract this ZIP into a working folder. This is a new installation; do not run it over your working portal.
-2. The package includes NGINX and NSSM executables and the required NGINX configuration support files. No separate executable download is needed. See docs/DEPENDENCIES.md for provenance and compatibility notes.
-3. Edit portal-settings.json before installation. Default destination is C:\LearningPortal, hostname Portal, HTTP port 80. Use a dedicated destination without spaces. Choose a unique school computer name (maximum 15 characters). A hostname alone does not configure DNS.
-4. Right-click Install.bat and select Run as administrator. Review the printed destination, service and firewall settings, then type YES. Installation refuses an existing destination, service or named firewall rules. An occupied port offers an alternative; existing services are not stopped.
-5. The script checks NGINX configuration, registers OfflineLearningPortal with automatic start and restart after application exit, adds firewall rules, starts the service, and checks the local catalogue. If offered a computer rename, type RENAME only if appropriate; otherwise press Enter. Renaming a domain-managed machine should be coordinated with its administrator. A rename requires a Windows restart.
-6. Open http://localhost/ on the server. On another school device, open http://SERVER-IP/ and, if name resolution works, http://Portal/. Replace Portal with the actual computer name. For a non-80 port append :PORT to all URLs.
-7. Restart Windows and repeat both local and client checks. The published v1.0.0 archive passed the review test, and the runtime baseline was exercised on Windows by the owner. See docs/VALIDATION.md for the validation record and the distinction between supplied evidence and checks recorded by the owner.
-   
-## Add school resources
-In the installed portal, copy permitted files into C:\LearningPortal\web\resources\category-name (adjust for your install directory), optionally add metadata sidecars, and run Rebuild_Catalog.bat. Python 3 is required only for rebuilding the catalogue. Initial browsing and installation need no Python. See docs/TAILORING.md for HTML activities, PDFs, media and optional integrations.
+## Core operation
 
-## Package layout
-| Folder/file | Purpose |
+- **Local web hosting:** Bundled NGINX serves the portal over HTTP. The default port is 80.
+- **Windows service:** Bundled NSSM registers the NGINX process as `OfflineLearningPortal`, starts it automatically with Windows and restarts it after an application exit.
+- **Resource catalogue:** A Python 3 script scans the local `web/resources` directory and builds `web/catalog.json`. Python is needed to rebuild the catalogue, not to install or browse the supplied portal.
+- **Supported catalogue files:** PDF, MP3, WAV, M4A, OGG, MP4, WEBM, HTML and HTM. HTML entry pages require a `.meta.json` sidecar to be listed. Their CSS, scripts, images and other dependencies must be included and referenced correctly by the activity itself.
+- **Resource details:** Optional sidecars provide title, category, language, source, rights and description. Without a sidecar, the catalogue derives the title from the filename and category from its folder; it does not infer language or rights.
+
+The portal serves files to network clients allowed by the configured firewall. Do not put confidential records in `web/resources`. Confirm permission to host every resource. Browser support for media formats varies.
+
+## Install
+
+1. Extract the release ZIP into a working folder. Use a dedicated destination; the installer refuses to overwrite an existing destination.
+2. Edit `portal-settings.json`. Defaults are `C:\LearningPortal`, hostname `Portal`, service `OfflineLearningPortal`, and HTTP port 80. The configured hostname does not create DNS or guarantee that clients can resolve it.
+3. Right-click `Install.bat` and choose **Run as administrator**. Review the destination, port, service and firewall scope. Type `YES` to continue.
+4. If the selected port is occupied, choose an available alternative or cancel. The installer does not stop existing services.
+5. On the server, open `http://localhost/`. From another device on the school LAN, open `http://SERVER-IP/`. If name resolution is configured, the hostname URL may also work. For a non-80 port, append `:PORT` to the address.
+6. Follow the setup guide to check access, restart behaviour and removal options.
+
+The installer configures inbound firewall rules from `portal-settings.json`; review these settings for the school network before confirming. Computer renaming is optional and may require a restart.
+
+## Add or update resources
+
+Copy permitted files into a category folder under `web/resources`, for example `web/resources/Science`. To add catalogue details, create a matching sidecar such as `fractions.pdf.meta.json`. Run `Rebuild_Catalog.bat` to regenerate the catalogue, then refresh the page. See [`docs/TAILORING.md`](docs/TAILORING.md) for metadata format, HTML activities and supported content workflows.
+
+The catalogue generator does not install content or repair an activity's missing dependencies. HTML files are listed only when registered with a sidecar. Back up resources before maintenance.
+
+## Technical scope and limits
+
+The baseline is one NGINX web service and a static JSON catalogue. It has no browser-based administration or upload panel, user accounts, learner tracking or automated assessment. Kiwix/ZIM hosting is an optional separate service described in the guides; the installer does not install or configure it.
+
+## Package map
+
+| Path | Contents |
 |---|---|
-| web/ | Offline home page, catalogue and school resources |
-| scripts/ | Windows setup/uninstall; Python catalogue generator and PDF guide source |
-| portal-settings.json | Installation settings |
-| vendor/ | Bundled NGINX, NSSM and upstream notices |
-| docs/ | Dependencies, tailoring, operations and validation |
-| tests/ | Portable catalogue tests |
+| `web/` | Portal pages, styles, catalogue and example resources |
+| `scripts/` | Windows installation/removal and Python catalogue/guide tools |
+| `portal-settings.json` | Install path, hostname, port, service and firewall settings |
+| `vendor/` | NGINX, NSSM and upstream notices/provenance |
+| `docs/` | Setup, dependencies, tailoring, operations and validation records |
+| `tests/` | Portable catalogue tests |
 
-The baseline has one web service. Kiwix is an optional additional service, not required for the main portal. NSSM is a service wrapper, not a scraper; this package does not scrape web content. Back up resources and verify permission to host them. MIT licensing terms and dependency notice locations are documented in LICENSE_STATUS.md.
+## Guides and validation
 
+The package includes guides for setup and access, adding resources, and optional Kiwix configuration. The baseline Windows deployment was tested by the project owner. Package preparation checks and the limits of the recorded evidence are documented in [`docs/VALIDATION.md`](docs/VALIDATION.md) and [`docs/TEST_HISTORY.md`](docs/TEST_HISTORY.md). Optional Kiwix/ZIM and reverse-proxy procedures were not executed as part of the recorded Windows baseline.
 
-## Release documentation
-This v1.0.0 release consolidates the owner's accepted runtime baseline with documented tests, original-file MIT licensing and matching upstream dependency notices. Review RELEASE_NOTES.md, LICENSE.txt, THIRD_PARTY_NOTICES.md and docs/TEST_HISTORY.md. Run the installed Uninstall.bat to choose preservation or full deletion. Legacy rollback is kept separately. Occupied-port handling offers an alternative without stopping existing services.
+## Licence and citation
 
-## Included user guides
-1. Setup and Access (4 pages): installation, access, checks, removal and finding the live files.
-2. Add and Organise Resources (10 pages): an original local lesson built with Explorer and Notepad; complete HTML, CSS, JavaScript, optional media and Python exercises.
-3. Kiwix and Advanced Resources (10 pages): official software/ZIM download steps, directory creation, manual testing, scoped firewall rule, separate NSSM service, navigation, maintenance and removal.
+Original portal files and guides are MIT licensed. Third-party components and school-added materials retain their own terms; see [`LICENSE.txt`](LICENSE.txt), [`LICENSE_STATUS.md`](LICENSE_STATUS.md) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
-Read the PDFs through the catalogue. Full editable Markdown and canonical guide data are in docs/guide_sources. To regenerate PDFs, install Python 3 and ReportLab and run `python scripts/build_user_guides.py`; use --font-dir for alternative font locations. Edit guides.json for PDF content and keep Markdown companions in sync.
+- GitHub repository and release: https://github.com/tirtharaj84/offline-learning-portal
+- Zenodo version DOI: https://doi.org/10.5281/zenodo.23120387
+- Creator: Tirtharaj Dhungana — tirtharajdhungana84@gmail.com
 
-## Ready-made fresh lesson
-Copy examples/lesson-starter into the installed web/resources/Activities folder, or follow Guide 02 to create every file yourself. The lesson and its answer button work without media downloads. Optional media is teacher supplied with permission. The separate Python media list is optional; the main catalogue uses Rebuild_Catalog.bat. No code from the author's prior portal is reused in this new lesson.
-
-The optional Kiwix instructions have not been executed on Windows during preparation; test them separately. Its server is not bundled or automatically installed. Advanced reverse proxy instructions are a separate appendix and are unnecessary for the beginner direct-port setup.
-
-To update existing guides, back up the installed web folder, replace only these three PDFs and their metadata, and rebuild the installed catalogue. Keep school resources. Service reinstallation is unnecessary for content edits. See docs/PUBLICATION.md for published release links and archive maintenance instructions.
-
-## Creator and contact
-Tirtharaj Dhungana - [tirtharajdhungana84@gmail.com](mailto:tirtharajdhungana84@gmail.com). Original project files, manuals and lesson examples are MIT licensed. Third-party components and teacher-added content retain their own terms.
-
-## Published release
-
-Version 1.0.0 is archived on Zenodo: [10.5281/zenodo.23120387](https://doi.org/10.5281/zenodo.23120387).
-
-GitHub release and ZIP: [v1.0.0](https://github.com/tirtharaj84/offline-learning-portal/releases/tag/v1.0.0).
-
-## Acknowledgements
-
-ChatGPT (OpenAI), including its Codex tools, assisted with code and script drafting and revision, documentation, guides, examples, troubleshooting, and release preparation. Tirtharaj Dhungana directed and reviewed the work and performed the Windows deployment tests reported in the validation record. Responsibility for the release remains with the project creator. See [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md) for details.
