@@ -48,8 +48,12 @@ To update existing guides, back up the installed web folder, replace only these 
 ## Creator and contact
 Tirtharaj Dhungana - [tirtharajdhungana84@gmail.com](mailto:tirtharajdhungana84@gmail.com). Original project files, manuals and lesson examples are MIT licensed. Third-party components and teacher-added content retain their own terms.
 
-## Final publication package
-Upload Offline_Learning_Portal_v1.0.0.zip to a Zenodo software record. For GitHub, put the extracted package contents at the repository root, tag the release v1.0.0, and attach this ZIP. The ready-made lesson is included in examples/lesson-starter; no separate example download is required. See docs/PUBLICATION.md and docs/GITHUB_RELEASE.md.
+## Published release
+
+Version 1.0.0 is archived on Zenodo: [10.5281/zenodo.23120387](https://doi.org/10.5281/zenodo.23120387).
+
+GitHub release and ZIP: [v1.0.0](https://github.com/tirtharaj84/offline-learning-portal/releases/tag/v1.0.0).
+
 ## Acknowledgements
 
 ChatGPT (OpenAI), including its Codex tools, assisted with code and script drafting and revision, documentation, guides, examples, troubleshooting, and release preparation. Tirtharaj Dhungana directed and reviewed the work and performed the Windows deployment tests reported in the validation record. Responsibility for the release remains with the project creator. See [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md) for details.
