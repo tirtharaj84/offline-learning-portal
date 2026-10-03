@@ -10,8 +10,8 @@ A small Windows school portal: NGINX serves a local catalogue and three illustra
 4. Right-click Install.bat and select Run as administrator. Review the printed destination, service and firewall settings, then type YES. Installation refuses an existing destination, service or named firewall rules. An occupied port offers an alternative; existing services are not stopped.
 5. The script checks NGINX configuration, registers OfflineLearningPortal with automatic start and restart after application exit, adds firewall rules, starts the service, and checks the local catalogue. If offered a computer rename, type RENAME only if appropriate; otherwise press Enter. Renaming a domain-managed machine should be coordinated with its administrator. A rename requires a Windows restart.
 6. Open http://localhost/ on the server. On another school device, open http://SERVER-IP/ and, if name resolution works, http://Portal/. Replace Portal with the actual computer name. For a non-80 port append :PORT to all URLs.
-7. Restart Windows and repeat both local and client checks. The runtime baseline was exercised on Windows by the owner; this exact v1.0.0 archive needs a review test before publication; docs/VALIDATION.md distinguishes supplied evidence from unrecorded individual checks.
-
+7. Restart Windows and repeat both local and client checks. The published v1.0.0 archive passed the review test, and the runtime baseline was exercised on Windows by the owner. See docs/VALIDATION.md for the validation record and the distinction between supplied evidence and checks recorded by the owner.
+   
 ## Add school resources
 In the installed portal, copy permitted files into C:\LearningPortal\web\resources\category-name (adjust for your install directory), optionally add metadata sidecars, and run Rebuild_Catalog.bat. Python 3 is required only for rebuilding the catalogue. Initial browsing and installation need no Python. See docs/TAILORING.md for HTML activities, PDFs, media and optional integrations.
 
