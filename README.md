@@ -1,4 +1,5 @@
 # Offline Learning Portal — v1.0.0
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23120387.svg)](https://doi.org/10.5281/zenodo.23120387)
 
 A small Windows school portal: NGINX serves a local catalogue and three illustrated user guides. NSSM runs NGINX automatically as a Windows service. Schools can add their own permitted resources without adopting the original portal's folder names or collections.
 
