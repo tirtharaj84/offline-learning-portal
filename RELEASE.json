@@ -1,13 +1,12 @@
 {
   "name": "Offline Learning Portal",
-  "version": "1.0.0",
-  "date": "2026-10-03",
+  "version": "1.1.0",
+  "date": "2026-10-04",
   "license": "MIT",
   "copyright_holder": "Tirtharaj Dhungana",
-  "basis": "owner-tested runtime baseline; illustrated guides, catalogue and publication metadata update",
-  "publication_status": "published",
+  "basis": "interactive installation/removal; owner-confirmed Windows acceptance and portable preparation checks",
   "contact_email": "tirtharajdhungana84@gmail.com",
   "repository_url": "https://github.com/tirtharaj84/offline-learning-portal",
-  "release_url": "https://github.com/tirtharaj84/offline-learning-portal/releases/tag/v1.0.0",
-  "doi": "10.5281/zenodo.23120387"
+  "release_status": "stable",
+  "release_url": "https://github.com/tirtharaj84/offline-learning-portal/releases/tag/v1.1.0"
 }

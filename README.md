@@ -1,60 +1,73 @@
-# Offline Learning Portal — v1.0.0
+# Offline Learning Portal - v1.1.0
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23120387.svg)](https://doi.org/10.5281/zenodo.23120387)
+The project owner confirmed that testing of the interactive installation and removal tools passed on their Windows PC. The technical record distinguishes this report from portable preparation checks. See `docs/VALIDATION.md`.
 
-A Windows-based school LAN site for serving a catalogue of locally stored learning resources. NGINX serves the portal and files; NSSM runs NGINX as a Windows service. A browser on the server or an allowed device on the school network can open the catalogue.
-
-## Core operation
-
-- **Local web hosting:** Bundled NGINX serves the portal over HTTP. The default port is 80.
-- **Windows service:** Bundled NSSM registers the NGINX process as `OfflineLearningPortal`, starts it automatically with Windows and restarts it after an application exit.
-- **Resource catalogue:** A Python 3 script scans the local `web/resources` directory and builds `web/catalog.json`. Python is needed to rebuild the catalogue, not to install or browse the supplied portal.
-- **Supported catalogue files:** PDF, MP3, WAV, M4A, OGG, MP4, WEBM, HTML and HTM. HTML entry pages require a `.meta.json` sidecar to be listed. Their CSS, scripts, images and other dependencies must be included and referenced correctly by the activity itself.
-- **Resource details:** Optional sidecars provide title, category, language, source, rights and description. Without a sidecar, the catalogue derives the title from the filename and category from its folder; it does not infer language or rights.
-
-The portal serves files to network clients allowed by the configured firewall. Do not put confidential records in `web/resources`. Confirm permission to host every resource. Browser support for media formats varies.
+NGINX serves a local resource catalogue and files over the school LAN. NSSM runs it as a Windows service. The setup window provides folder/port controls, an activity indicator, installation output, a local Open portal button and a Copy device link button. Phones and computers use the server's IP address and selected port. Computer renaming and hostname discovery are disabled.
 
 ## Install
 
-1. Extract the release ZIP into a working folder. Use a dedicated destination; the installer refuses to overwrite an existing destination.
-2. Edit `portal-settings.json`. Defaults are `C:\LearningPortal`, hostname `Portal`, service `OfflineLearningPortal`, and HTTP port 80. The configured hostname does not create DNS or guarantee that clients can resolve it.
-3. Right-click `Install.bat` and choose **Run as administrator**. Review the destination, port, service and firewall scope. Type `YES` to continue.
-4. If the selected port is occupied, choose an available alternative or cancel. The installer does not stop existing services.
-5. On the server, open `http://localhost/`. From another device on the school LAN, open `http://SERVER-IP/`. If name resolution is configured, the hostname URL may also work. For a non-80 port, append `:PORT` to the address.
-6. Follow the setup guide to check access, restart behaviour and removal options.
+Use Windows with Windows PowerShell 5.1 and administrator permission. Keep school resources backed up.
 
-The installer configures inbound firewall rules from `portal-settings.json`; review these settings for the school network before confirming. Computer renaming is optional and may require a restart.
+### 1. Extract the ZIP
 
-## Add or update resources
+Right-click the ZIP and choose Extract All. Open the extracted portal folder.
 
-Copy permitted files into a category folder under `web/resources`, for example `web/resources/Science`. To add catalogue details, create a matching sidecar such as `fractions.pdf.meta.json`. Run `Rebuild_Catalog.bat` to regenerate the catalogue, then refresh the page. See [`docs/TAILORING.md`](docs/TAILORING.md) for metadata format, HTML activities and supported content workflows.
+### 2. Open setup
 
-The catalogue generator does not install content or repair an activity's missing dependencies. HTML files are listed only when registered with a sidecar. Back up resources before maintenance.
+Double-click Install.bat and approve the Windows administrator prompt. A setup window opens; you do not need to edit JSON for the normal settings.
 
-## Technical scope and limits
+### 3. Choose the folder and port
 
-The baseline is one NGINX web service and a static JSON catalogue. It has no browser-based administration or upload panel, user accounts, learner tracking or automated assessment. Kiwix/ZIM hosting is an optional separate service described in the guides; the installer does not install or configure it.
+Keep the displayed folder and port, or choose another. Click Check port. If the port is occupied, click Use available port to select a free alternative. The installer also rechecks the port before installing.
 
-## Package map
+### 4. Install
 
-| Path | Contents |
-|---|---|
-| `web/` | Portal pages, styles, catalogue and example resources |
-| `scripts/` | Windows installation/removal and Python catalogue/guide tools |
-| `portal-settings.json` | Install path, hostname, port, service and firewall settings |
-| `vendor/` | NGINX, NSSM and upstream notices/provenance |
-| `docs/` | Setup, dependencies, tailoring, operations and validation records |
-| `tests/` | Portable catalogue tests |
+Click Install portal. Wait for Installed successfully. Setup configures NGINX, the Windows service and the inbound HTTP firewall rule. It does not rename the computer.
 
-## Guides and validation
+### 5. Open and share the IP link
 
-The package includes guides for setup and access, adding resources, and optional Kiwix configuration. The baseline Windows deployment was tested by the project owner. Package preparation checks and the limits of the recorded evidence are documented in [`docs/VALIDATION.md`](docs/VALIDATION.md) and [`docs/TEST_HISTORY.md`](docs/TEST_HISTORY.md). Optional Kiwix/ZIM and reverse-proxy procedures were not executed as part of the recorded Windows baseline.
+Click Open portal to check it on the server. Choose the school Wi-Fi or Ethernet address from LAN address, then click Copy device link. Open that link on phones or computers connected to the same school network. The port is included automatically when needed.
 
-## Licence and citation
+Check the portal once after restarting Windows to confirm automatic service startup. This is a validation check, not another setup step.
 
-Original portal files and guides are MIT licensed. Third-party components and school-added materials retain their own terms; see [`LICENSE.txt`](LICENSE.txt), [`LICENSE_STATUS.md`](LICENSE_STATUS.md) and [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+## If another service needs port 80
 
-- GitHub repository and release: https://github.com/tirtharaj84/offline-learning-portal
-- Zenodo version DOI: https://doi.org/10.5281/zenodo.23120387
-- Creator: Tirtharaj Dhungana — tirtharajdhungana84@gmail.com
+The simplest arrangement is to keep that service running and choose another portal port, such as 8080. The setup window displays the complete IP-and-port link.
 
+To move an IIS site instead, open **IIS Manager > Sites > the site > Bindings**, select its HTTP binding, choose **Edit**, and change the port to a free value such as 8082. Repeat for other HTTP bindings still using port 80. Update that site's links and any firewall rule needed for its clients, then use **Check port** in portal setup. Keep port 8081 free if you plan to use it for the optional Kiwix server. For another web server, change its listening port in that application's configuration and restart that service according to its own instructions.
+
+**Stop IIS for port 80...** is an optional temporary action. It requires a running IIS HTTP binding associated with the occupied port and a separate confirmation. It interrupts IIS web publishing, checks whether port 80 became free, and restores IIS if the port remains occupied. It does not change IIS bindings or startup settings, stop the shared HTTP service, or disable WAS. IIS may reclaim port 80 after a Windows restart; change the binding or use another portal port for a lasting arrangement. If setup is cancelled before successful installation, it attempts to restore IIS. After a successful installation, restore IIS only after resolving the binding conflict; an administrator can use `Start-Service W3SVC`.
+
+## Uninstall
+
+Open `Uninstall.bat` from the installed portal folder and approve administrator access. The window shows the owned folder and service.
+
+- **Keep files:** remove the portal service and recorded firewall rules; retain the installed files and school resources. The ownership record is updated to show removal.
+- **Delete everything:** remove the same service/rules and permanently delete the entire owned installation folder. Review the folder and confirm deletion only after backing up.
+- **Cancel:** close without starting removal.
+
+Removal runs from a temporary folder outside the installation. Results and logs remain there even after full deletion. Both window and runner verify ownership; the runner also checks that any existing service points to the installed NGINX executable. Uninstall does not restore or reconfigure IIS. If setup temporarily stopped IIS, resolve its binding conflict before an administrator restores it.
+
+## Resource management
+
+Copy permitted resources into `web/resources` and run `Rebuild_Catalog.bat` with Python 3 installed. Python is not needed for browsing or installation. Supported catalogue formats are PDF, MP3, WAV, M4A, OGG, MP4, WEBM, HTML and HTM. HTML entry pages need metadata sidecars and complete local assets. See `docs/TAILORING.md`.
+
+There is no browser upload/administration panel, learner account system or progress tracking. Kiwix is a separately configured optional service. Guide 1 covers setup and removal; Guides 2 and 3 cover resource activities and optional Kiwix configuration.
+
+## Configuration and records
+
+Normal settings come from `portal-settings.json`; the window lets you change destination and port for this installation. The selected settings are saved in the installed folder. Advanced service and firewall settings can be edited before launching setup. The window lists the actual profiles and remote-address scope. Existing installation folders, service names and named firewall rules are not overwritten. Failures retain an ownership record and installation output for troubleshooting.
+
+See `docs/VALIDATION.md` and `docs/INTERACTIVE_SETUP_TEST.md` for the recorded checks and reproducible Windows procedures. The catalogue generator and bundled executable bytes are retained from the baseline.
+
+## Licence and creator
+
+Original files use MIT; keep `LICENSE.txt`, `LICENSE_STATUS.md`, `THIRD_PARTY_NOTICES.md` and vendor notices. Tirtharaj Dhungana: tirtharajdhungana84@gmail.com. AI assistance is recorded in `ACKNOWLEDGEMENTS.md`.
+
+Repository: https://github.com/tirtharaj84/offline-learning-portal
+
+Published v1.0.0 baseline DOI: https://doi.org/10.5281/zenodo.23120387. That DOI identifies the earlier v1.0.0 release.
+
+The package includes SHA256SUMS.txt for all distributed files except the manifest itself.
+
+Version 1.1.0 release: https://github.com/tirtharaj84/offline-learning-portal/releases/tag/v1.1.0

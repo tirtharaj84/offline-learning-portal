@@ -1,27 +1,30 @@
-# Offline Learning Portal v1.0.0
+# Offline Learning Portal v1.1.0
 
-## Published release
+Version 1.1.0 adds interactive Windows installation and removal to the local NGINX/NSSM portal.
 
-- GitHub release: https://github.com/tirtharaj84/offline-learning-portal/releases/tag/v1.0.0.
-- Zenodo version DOI: https://doi.org/10.5281/zenodo.23120387.
-- Creator and contact: Tirtharaj Dhungana — tirtharajdhungana84@gmail.com.
+## Installation
 
-## Included components
+- Coloured buttons for installing, checking/selecting a free port, opening the portal and copying a device link.
+- Administrator elevation, a responsive parent window, an activity indicator and background runner output.
+- The chosen destination and port are saved for installation. The runner rechecks the port.
+- Optional confirmed IIS W3SVC stopping when a running IIS port-80 binding can be associated with the listener. Setup rechecks port release and restores IIS if the port remains occupied. IIS startup settings and bindings are not changed.
+- IP-address-and-port client links. Computer renaming and hostname-discovery firewall rules are disabled.
 
-NGINX serves the local resource catalogue. NSSM runs NGINX as a Windows service. The package includes installation and removal scripts, catalogue generation, bundled dependency executables and notices, editable guide sources, original lesson examples and publication metadata.
+## Removal
 
-The three illustrated guides are Setup and Access (4 pages), Add and Organise Resources (10 pages), and Kiwix and Advanced Resources (10 pages). They cover installation, access, resource organisation, metadata, an original local lesson, optional permitted media and optional Kiwix configuration. The separate reverse proxy appendix is optional.
+- Keep files, Delete everything and Cancel buttons. Destructive removal requires a separate confirmation.
+- Ownership/root/NGINX-path checks and a whitelist of portal firewall-rule names. An existing service must point to the owned executable.
+- A removal runner, helper, result file and logs outside the installation folder, supporting full deletion while the window remains open.
+- Service removal precedes firewall removal and optional directory deletion. Keep files updates the ownership record. Errors are not reported as successful completion.
+- Uninstall does not restore or reconfigure IIS automatically.
 
-The example in examples/lesson-starter requires no third-party media for its core lesson and reuses no code from the creator's prior portal. Original project files and guides use MIT; vendor components and school-added content retain their own terms.
+## Validation
 
-## Validation record
+The project owner confirmed that all testing passed on their Windows PC on 4 October 2026. Detailed individual output, Windows build and hardware details were not supplied with that confirmation.
 
-Package preparation included six passing catalogue tests, JavaScript syntax checks, temporary HTTP checks, lesson fixture checks, PDF text extraction, inspection of all 24 guide pages and ZIP integrity checks. The creator reported successful Windows deployment and review testing of the published archive. See docs/VALIDATION.md and docs/TEST_HISTORY.md for the results, available evidence and limits of individual records.
+Preparation checks passed: seven PowerShell files parsed under PowerShell 7.4.6 on Linux; ten mocked port/IIS assertions; six catalogue tests; six mocked removal-engine tests; JSON parsing; PDF layout inspection; ZIP integrity and internal checksums. These preparation tests remain distinct from owner-reported Windows acceptance. Optional Kiwix/reverse-proxy execution is outside the recorded baseline checks.
 
-Optional Kiwix/ZIM hosting, reverse proxy deployment and specialised viewers were not executed as part of the recorded baseline preparation checks.
+The bundled NGINX/NSSM executable bytes and resource catalogue baseline are retained. Guides, metadata and technical records were updated for v1.1.0. Original project files use MIT; retain third-party notices.
 
-## Publication maintenance corrections
-
-The publication documents and release metadata identify the published repository and DOI. The installer includes project licence files, third-party notices, provenance and NSSM upstream notices in the installed directory. Notice documents specify source-package and installed locations.
-
-These notice-copy additions do not change service settings, firewall settings or bundled executable bytes. They have not been executed on Windows in the correction environment and are not included in the historical owner-confirmed test results. Verify their installed file locations when checking this corrected installer.
+GitHub release: https://github.com/tirtharaj84/offline-learning-portal/releases/tag/v1.1.0
+Creator: Tirtharaj Dhungana — tirtharajdhungana84@gmail.com.

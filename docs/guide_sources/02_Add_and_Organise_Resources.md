@@ -1,6 +1,6 @@
 # Add and organise learning resources
 
-Offline Learning Portal v1.0.0 | Copyright 2026 Tirtharaj Dhungana | MIT
+Offline Learning Portal v1.1.0 | Copyright 2026 Tirtharaj Dhungana | MIT
 
 ## 1. What you will make and how to use this guide
 

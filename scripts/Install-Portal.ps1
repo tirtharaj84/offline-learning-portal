@@ -1,5 +1,6 @@
 #requires -Version 5.1
 #requires -RunAsAdministrator
+param([string]$ConfigPath, [switch]$Unattended, [string]$ResultPath)
 $ErrorActionPreference = 'Stop'
 $package = Split-Path $PSScriptRoot -Parent
 $state = $null
@@ -9,7 +10,10 @@ function Native([string]$exe, [string[]]$arguments) {
 }
 function Save-State { $state | ConvertTo-Json -Depth 5 | Set-Content -Encoding UTF8 (Join-Path $state.install_directory 'installation.json') }
 try {
-    $cfg = Get-Content -Raw (Join-Path $package 'portal-settings.json') | ConvertFrom-Json
+    if (!$ConfigPath) { $ConfigPath = Join-Path $package 'portal-settings.json' }
+    $cfg = Get-Content -Raw -LiteralPath $ConfigPath | ConvertFrom-Json
+    $cfg.offer_computer_rename = $false
+    $cfg.enable_hostname_discovery_rules = $false
     if ($cfg.offer_computer_rename -isnot [bool] -or $cfg.enable_hostname_discovery_rules -isnot [bool]) { throw 'Rename and hostname discovery settings must be JSON true or false.' }
     $dest = [string]$cfg.install_directory
     if ($dest -notmatch '^[A-Za-z]:\\(?:[A-Za-z0-9_-]+\\)*[A-Za-z0-9_-]+$') { throw 'Use a dedicated absolute install path with no spaces, for example C:\LearningPortal.' }
@@ -25,6 +29,7 @@ try {
     # Query all listeners so a failed inventory is not mistaken for a free port.
     $listeners = @(Get-NetTCPConnection -State Listen -ErrorAction Stop)
     if (@($listeners | Where-Object LocalPort -eq $port).Count) {
+        if ($Unattended) { throw "TCP $port became occupied. Return to setup and choose a free port." }
         Write-Warning "TCP $port is occupied. IIS or another application may own it."
         $listeners | Where-Object LocalPort -eq $port | Select-Object LocalAddress,LocalPort,OwningProcess | Format-Table
         if (Get-Service W3SVC -ErrorAction SilentlyContinue) { Write-Host 'IIS W3SVC is installed; this alone does not prove it owns this port. For HTTP.sys diagnostics use: netsh http show servicestate' }
@@ -44,12 +49,12 @@ try {
     $rules = @("${prefix}HTTP")
     if ($cfg.enable_hostname_discovery_rules) { $rules += @("${prefix}LLMNR","${prefix}NetBIOS") }
     foreach ($name in $rules) { if (Get-NetFirewallRule -Name $name -ErrorAction SilentlyContinue) { throw "Firewall rule $name already exists. Review it first." } }
-    Write-Host "Install: $dest | Service: $($cfg.service_name) | Hostname: $($cfg.hostname) | TCP: $port"
+    Write-Host "Install: $dest | Service: $($cfg.service_name) | TCP: $port"
     Write-Host "Firewall profiles: $($profiles -join ', ') | Remote addresses: $($cfg.firewall_remote_address)"
-    if ((Read-Host 'Continue? Type YES') -cne 'YES') { Write-Host 'Cancelled.'; exit 0 }
+    if (!$Unattended -and (Read-Host 'Continue? Type YES') -cne 'YES') { Write-Host 'Cancelled.'; exit 0 }
     New-Item -ItemType Directory -Path $dest | Out-Null
     # Record ownership early so a partial installation can be inspected/uninstalled.
-    $state = [ordered]@{ schema_version=1; package_version='1.0.0'; install_directory=$dest; service_name=[string]$cfg.service_name; nginx_application=(Join-Path $dest 'runtime\nginx\nginx.exe'); firewall_names=$rules; hostname=[string]$cfg.hostname; port=$port; status='partial'; installed_at=(Get-Date).ToString('o') }
+    $state = [ordered]@{ schema_version=1; package_version='1.1.0'; iis_service_stopped_by_setup=([bool]$cfg.iis_service_stopped_by_setup); install_directory=$dest; service_name=[string]$cfg.service_name; nginx_application=(Join-Path $dest 'runtime\nginx\nginx.exe'); firewall_names=$rules; hostname=[string]$cfg.hostname; port=$port; status='partial'; installed_at=(Get-Date).ToString('o') }
     Save-State
     New-Item -ItemType Directory -Path (Join-Path $dest 'runtime') | Out-Null
     Copy-Item -LiteralPath (Join-Path $package 'vendor\nginx') -Destination (Join-Path $dest 'runtime\nginx') -Recurse
@@ -95,19 +100,14 @@ try {
     }
     if (!$healthy) { throw 'Service or local catalogue HTTP check failed. Inspect runtime\nginx\logs.' }
     $state.status='running'; Save-State
-    if ($cfg.offer_computer_rename -and $env:COMPUTERNAME -ine $cfg.hostname) {
-        if ((Read-Host "Rename this Windows computer to $($cfg.hostname)? Type RENAME, or press Enter to keep its name") -ceq 'RENAME') {
-            try { Rename-Computer -NewName $cfg.hostname -Force; Write-Host 'Restart Windows to complete the name change.' }
-            catch { Write-Warning "Portal installed, but rename failed: $_. Use the host IP or existing name." }
-        }
-    }
     Write-Host "SUCCESS: service is running and its catalogue is reachable. Local URL: http://localhost${suffix}/"
-    Write-Host "Hostname URL (after any accepted rename/restart): http://$($cfg.hostname)${suffix}/"
     Write-Host 'IPv4 addresses: choose the address on the school network, not a VPN/virtual adapter.'
     Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' } | Select-Object InterfaceAlias,IPAddress | Format-Table
-    Write-Host 'Verify restart and access from another school device before adopting this new starter.'
+    if ($ResultPath) { @{ success=$true; install_directory=$dest; service_name=[string]$cfg.service_name; port=$port; local_url="http://localhost${suffix}/" } | ConvertTo-Json | Set-Content -Encoding UTF8 -LiteralPath $ResultPath }
+    Write-Host 'Check access from a school device using the server IP address.'
     exit 0
 } catch {
+    if ($ResultPath) { @{ success=$false; message=[string]$_; install_directory=[string]$dest } | ConvertTo-Json | Set-Content -Encoding UTF8 -LiteralPath $ResultPath }
     Write-Error "Installation stopped: $_" -ErrorAction Continue
     if ($null -eq $state) { Write-Host 'Stopped before installation changes were made.' } else { Write-Host 'Partial files/services may remain. Inspect installation.json and logs; uninstall preserves files by default.' }
     exit 1

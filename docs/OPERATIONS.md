@@ -1,31 +1,33 @@
-# Operate and troubleshoot
+# Operations - v1.1.0
 
-The installed folder defaults to C:\LearningPortal. Edit resources there after installation: changing the extracted source package does not change the running copy.
+## Installed files and resources
 
-## Service and logs
-Inspect OfflineLearningPortal in services.msc. Its startup type is Automatic; NSSM restarts the wrapped application after exit. Logs are in runtime/nginx/logs, including access/error and service stdout/stderr files. Monitor disk use and arrange log rotation as part of ongoing administration; unlimited log storage is not appropriate for a long-running deployment.
+The installed destination, normally C:\LearningPortal, is the live copy. Editing the extracted package does not update it. Resource changes need catalogue rebuilding and browser refresh, not service reinstallation.
 
-If setup fails, it leaves owned files and installation.json for diagnosis rather than reporting success. Read the error and logs. If failure occurred before scripts were copied, run the package's scripts/Uninstall-Portal.ps1 copied into the partial installation's scripts folder, or have an administrator inspect and remove only the recorded service/rules. Do not rerun the installer over a partial directory.
+## Service and network
 
-## Network access
-HTTP inbound access defaults to Private and Domain profiles, from LocalSubnet only, and only for the installed nginx.exe. Check Get-NetConnectionProfile when local access works but LAN access fails. Choose the correct school network policy; do not blindly classify an untrusted network as Private. Routed clients on other subnets require an administrator to adjust the scope deliberately. The installer offers Any as an alternative scope, which is broader.
+The selected service uses automatic startup; NSSM restarts NGINX after application exit. NGINX logs are under runtime/nginx/logs. Use the actual LAN IPv4 address and configured port. Hostname discovery and computer renaming are disabled. The HTTP rule uses the configured profile/remote-address scope and NGINX program path. If local access succeeds but phone access fails, check the chosen adapter, firewall profile/scope and Wi-Fi client isolation. The installer does not assign a static IP or DHCP reservation.
 
-Optional hostname rules allow UDP 5355 (LLMNR) and 137 (NetBIOS name service) within the same profile/subnet scope. They do not enable name resolution, configure DHCP/DNS, or guarantee hostname access on every device. Disable enable_hostname_discovery_rules when school policy requires DNS-only operation. Ask the network administrator for a DNS record if needed. Use a DHCP reservation or managed static address for stable IP access; this script does not set IP addressing. Windows computer names and DNS records must be unique.
+For lasting port sharing, keep other services on their own ports. Move IIS HTTP bindings using IIS Manager > Sites > the site > Bindings > Edit; update existing-site links and permitted firewall access. Temporary W3SVC stopping can be reversed with Start-Service W3SVC after resolving bindings. Neither portal uninstall option restores IIS automatically.
 
-Test http://localhost/, then the actual LAN IP, then the actual hostname. For custom ports include :PORT. If IP works but hostname fails, diagnose name resolution. If neither remote URL works, check service state, chosen adapter/IP, firewall profile/scope and client isolation on the wireless network.
+## Failure records
 
-portal-settings.json is used at installation time. Editing it later does not apply changes. Port or installation-path changes require coordinated configuration, service and firewall updates by the administrator; do not simply rerun setup.
+Setup retains a partial owned destination and installation.json if it fails after creating files. The window shows process output. Installer and removal runner logs/results are held in uniquely named PortalSetup-* and PortalUninstall-* directories under the temporary folder. Save these records before cleaning temporary files. Do not rerun setup over a partial destination.
+
+If a partial installation lacks removal scripts, copy Uninstall.bat and scripts/Uninstall-Portal-GUI.ps1, scripts/Uninstall-Portal.ps1 and scripts/Uninstall-Helpers.ps1 from this package into that partial destination with the same folder structure. Keep its installation.json unchanged; the removal tools verify it.
 
 ## Backup
-Copy web (including all metadata and catalogue), portal-settings.json, installation.json, docs and runtime/nginx/conf/portal.conf to a separate device. Also retain approved binary distributions and version/hash notes. Take a consistent copy when resources are not being edited. Restore into a reviewed new deployment; do not blindly reuse a manifest to claim ownership of another installation.
 
-## Uninstall
-Right-click the installed Uninstall.bat and run as administrator. Type REMOVE after reviewing the installation. Choose option 1 to stop/remove the recorded service and firewall rules while keeping resources, or option 2 to additionally delete the installed directory. Full deletion also requires DELETE confirmation. It verifies the service application path before removing it. It does not rename the computer back.
+Copy web, settings, installation.json, docs and runtime/nginx/conf/portal.conf to another device before destructive removal. Keep original binary notices and distributions. The backup must be outside the directory being deleted.
 
-Only after backing up, an elevated PowerShell command can also remove the entire installed directory:
+## Interactive removal
 
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\LearningPortal\scripts\Uninstall-Portal.ps1 -DeleteFiles
-```
+Run the installed Uninstall.bat and approve administrator access. Review the displayed folder and service.
 
-This additionally requires typing DELETE. Adjust the path if configured differently. It is irreversible without your backup.
+- Keep files: after confirmation, stop/deregister the owned portal service and remove its recorded named firewall rules. Preserve files/resources and mark the ownership record uninstalled-files-preserved.
+- Delete everything: after an explicit permanent-deletion confirmation, do the same and delete the entire owned directory. Only report successful deletion after confirming that the directory is absent.
+- Cancel: close without initiating removal. Once a runner starts, closing is blocked until it finishes.
+
+The coordinator uses a temporary working directory; the runner and helper are copied outside the installation to support deletion while the window remains open. Ownership checks run before the window and again in the runner. Mismatched service paths or unrelated rule names stop removal. On error, close the window, review the retained logs/state and resolve the problem before retrying.
+
+The console runner remains available for administrator use and retains typed confirmations unless launched with its internal -Unattended switch by the confirmed GUI action. Do not use that internal switch to bypass the intended review.

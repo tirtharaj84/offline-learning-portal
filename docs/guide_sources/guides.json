@@ -10,7 +10,7 @@
         "blocks": [
           [
             "p",
-            "Offline Learning Portal lets learners open resources in a browser using a school Windows server. Start with these three guides, then add resources the school is permitted to host. Internet access is not needed to browse files that are fully local; it may be needed to obtain software or new resources."
+            "Offline Learning Portal serves permitted local resources on the school network. This guide covers v1.1.0 installation and removal windows. The project owner confirmed Windows acceptance; technical preparation checks are documented separately."
           ],
           [
             "h",
@@ -19,10 +19,10 @@
           [
             "bullets",
             [
-              "Use a Windows machine with Windows PowerShell 5.1 and permission to administer services and firewall rules. Keep a backup of school resources.",
-              "Extract the complete ZIP before launching anything. The supplied NGINX and NSSM binaries and their notices are already in vendor/.",
-              "Choose a dedicated destination, normally C:\\LearningPortal. The extraction folder may contain spaces; the installation destination must not.",
-              "Use an available port. The default is TCP 80; if occupied, setup offers an alternative such as 8080. Use the chosen port in every URL."
+              "Use a Windows computer with Windows PowerShell 5.1 and administrator permission. Back up school resources.",
+              "Extract the complete ZIP. NGINX and NSSM are already included. ",
+              "Setup uses a window with coloured buttons. Normal setup does not require editing portal-settings.json.",
+              "Phones and computers use the server IP address and port. Computer renaming and hostname-discovery rules are disabled."
             ]
           ],
           [
@@ -62,57 +62,64 @@
           ],
           [
             "p",
-            "The main service is OfflineLearningPortal. NSSM keeps NGINX running as a Windows service. Optional Kiwix is introduced in Guide 03 and is separate from this baseline."
+            "The portal uses one NGINX service, normally named OfflineLearningPortal. Optional Kiwix remains a separate service; choose different ports for separate services."
           ]
         ]
       },
       {
-        "title": "Install once; choose the name deliberately",
+        "title": "Install and share the IP link",
         "blocks": [
           [
             "h",
-            "1. Review settings before installation"
-          ],
-          [
-            "code",
-            "\"install_directory\": \"C:\\\\LearningPortal\",\n\"hostname\": \"Portal\",\n\"http_port\": 80"
+            "1. Extract the ZIP"
           ],
           [
             "p",
-            "This is an excerpt from portal-settings.json, not a complete JSON file. Keep JSON commas and boolean values valid. Destination paths use doubled backslashes in JSON. Choose a unique computer name up to 15 characters, beginning with a letter, with letters, digits or hyphens."
+            "Right-click the ZIP and choose Extract All. Open the extracted portal folder."
           ],
           [
             "h",
-            "2. Start the installer"
-          ],
-          [
-            "bullets",
-            [
-              "Right-click Install.bat and select Run as administrator. Review the destination, service name, HTTP port and firewall scope.",
-              "Type YES to continue. Setup creates NGINX runtime directories, validates configuration, installs/configures NSSM, adds rules, starts the service and checks the local catalogue.",
-              "At the rename prompt, type RENAME only to change the Windows computer name. Pressing Enter keeps the current name. A configured hostname does not create a DNS record.",
-              "If you accept renaming, restart Windows to complete the name change. Coordinate changes on managed school/domain computers with their administrator."
-            ]
-          ],
-          [
-            "h",
-            "3. Open the home page"
-          ],
-          [
-            "code",
-            "http://localhost/\nhttp://SERVER-IP/\nhttp://ACTUAL-HOSTNAME/"
+            "2. Open setup"
           ],
           [
             "p",
-            "Replace SERVER-IP and ACTUAL-HOSTNAME with your actual values. If you chose port 8080, use http://SERVER-IP:8080/. On a learner phone, localhost means the phone itself: use the server IP or resolvable server name."
+            "Double-click Install.bat and approve the Windows administrator prompt. A setup window opens; you do not need to edit JSON for the normal settings."
           ],
           [
             "h",
-            "Read success accurately"
+            "3. Choose the folder and port"
           ],
           [
             "p",
-            "A successful installer health check confirms a running service and local catalogue response. It does not by itself prove client access or name resolution. Editing portal-settings.json later does not apply changes to an installed server."
+            "Keep the displayed folder and port, or choose another. Click Check port. If the port is occupied, click Use available port to select a free alternative. The installer also rechecks the port before installing."
+          ],
+          [
+            "h",
+            "4. Install"
+          ],
+          [
+            "p",
+            "Click Install portal. Wait for Installed successfully. Setup configures NGINX, the Windows service and the inbound HTTP firewall rule. It does not rename the computer."
+          ],
+          [
+            "h",
+            "5. Open and share the IP link"
+          ],
+          [
+            "p",
+            "Click Open portal to check it on the server. Choose the school Wi-Fi or Ethernet address from LAN address, then click Copy device link. Open that link on phones or computers connected to the same school network. The port is included automatically when needed."
+          ],
+          [
+            "h",
+            "If port 80 is already used"
+          ],
+          [
+            "p",
+            "Use available port keeps other services running. For IIS, open IIS Manager > Sites > the site > Bindings, edit its HTTP binding to a free port such as 8082, update its links/firewall access, and recheck port 80. Other servers have their own listening-port settings."
+          ],
+          [
+            "p",
+            "Stop IIS for port 80... requires confirmation and interrupts IIS web publishing. It is temporary: IIS may reclaim port 80 after a restart. Change the binding or use a different portal port for a lasting arrangement."
           ]
         ]
       },
@@ -125,11 +132,11 @@
           ],
           [
             "code",
-            "Get-Service OfflineLearningPortal\nhostname\nGet-NetIPAddress -AddressFamily IPv4 |\n  Where-Object {$_.IPAddress -notlike '127.*'} |\n  Select-Object InterfaceAlias,IPAddress\nGet-NetTCPConnection -State Listen |\n  Where-Object LocalPort -eq 80"
+            "Get-Service OfflineLearningPortal\nGet-NetIPAddress -AddressFamily IPv4 |\n  Where-Object {$_.IPAddress -notlike '127.*'} |\n  Select-Object InterfaceAlias,IPAddress\nGet-NetTCPConnection -State Listen |\n  Where-Object LocalPort -eq 80"
           ],
           [
             "p",
-            "Expected: service status Running and a listener on your configured port. Choose the IP of the school Wi-Fi/Ethernet adapter, not a VPN or virtual adapter. With example IP 192.168.1.25, open http://192.168.1.25/ from a learner phone. Replace it with your actual IP; add :8080 if that is your chosen port."
+            "Expected: service status Running and a listener on your configured port. Choose the IP of the school Wi-Fi/Ethernet adapter, not a VPN or virtual adapter. With example IP 192.168.1.25, open http://192.168.1.25/ from a learner phone. Replace it with your actual IP; add :8080 if that is your chosen port. Substitute your configured service name and port in the commands when different."
           ],
           [
             "h",
@@ -137,7 +144,7 @@
           ],
           [
             "p",
-            "Restart Windows. Open the portal without manually starting a service. Open a guide, use search, then add the worked example in Guide 02. Disconnect internet while keeping the school LAN connected and check again. IP works but name fails: check the actual hostname and school name resolution. Localhost works but a phone fails: check network profile, firewall scope and Wi-Fi client isolation."
+            "Restart Windows. Open the portal without manually starting a service. Open a guide, use search, then add the worked example in Guide 02. Disconnect internet while keeping the school LAN connected and check again. Localhost works but a phone fails: check network profile, firewall scope and Wi-Fi client isolation."
           ],
           [
             "h",
@@ -145,7 +152,7 @@
           ],
           [
             "p",
-            "Back up web, portal-settings.json, installation.json and runtime/nginx/conf/portal.conf. Run the installed Uninstall.bat as administrator. Choose 1 to preserve files or 2 to delete the installation, then answer REMOVE and, for deletion, DELETE. The optional Kiwix service has separate removal steps in Guide 03."
+            "Back up web, portal-settings.json, installation.json and runtime/nginx/conf/portal.conf outside the installed folder. Open the installed Uninstall.bat and approve administrator access. Keep files removes the portal service/rules and retains resources. Delete everything also deletes the owned installation folder after a separate confirmation. Cancel starts no removal. Optional Kiwix has separate removal steps in Guide 03."
           ],
           [
             "p",
@@ -157,7 +164,7 @@
           ],
           [
             "p",
-            "The owner supplied Windows installation, local health, LAN IP access and full-removal evidence. New example code has preparation checks; this exact archive and optional Kiwix need local review. See docs/VALIDATION.md. NGINX Windows guidance: https://nginx.org/en/docs/windows.html ; NSSM: https://nssm.cc/usage ."
+            "The owner confirmed that Windows testing of the interactive tools passed on their PC. Detailed individual logs were not supplied with that confirmation. See docs/VALIDATION.md and docs/INTERACTIVE_SETUP_TEST.md for the record and reproducible checks."
           ]
         ]
       },
@@ -182,7 +189,7 @@
           ],
           [
             "p",
-            "The Windows path C:\\LearningPortal\\web\\resources\\Activities\\lesson-starter\\index.html becomes http://localhost/resources/Activities/lesson-starter/index.html on the server. web is the server document root and is omitted from the URL. On a learner device replace localhost with the server IP or working hostname. A browser URL uses forward slashes; a Windows path normally uses backslashes."
+            "The Windows path C:\\LearningPortal\\web\\resources\\Activities\\lesson-starter\\index.html becomes http://localhost/resources/Activities/lesson-starter/index.html on the server. web is the server document root and is omitted from the URL. On a learner device replace localhost with the server IP address. A browser URL uses forward slashes; a Windows path normally uses backslashes."
           ],
           [
             "h",

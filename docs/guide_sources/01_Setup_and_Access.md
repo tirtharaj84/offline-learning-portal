@@ -1,17 +1,17 @@
 # Set up and access your portal
 
-Offline Learning Portal v1.0.0 | Copyright 2026 Tirtharaj Dhungana | MIT
+Offline Learning Portal v1.1.0 | Tirtharaj Dhungana | MIT
 
 ## A school library on your local network
 
-Offline Learning Portal lets learners open resources in a browser using a school Windows server. Start with these three guides, then add resources the school is permitted to host. Internet access is not needed to browse files that are fully local; it may be needed to obtain software or new resources.
+Offline Learning Portal serves permitted local resources on the school network. This guide covers v1.1.0 installation and removal windows. The project owner confirmed Windows acceptance; technical preparation checks are documented separately.
 
 ### Before you begin
 
-- Use a Windows machine with Windows PowerShell 5.1 and permission to administer services and firewall rules. Keep a backup of school resources.
-- Extract the complete ZIP before launching anything. The supplied NGINX and NSSM binaries and their notices are already in vendor/.
-- Choose a dedicated destination, normally C:\LearningPortal. The extraction folder may contain spaces; the installation destination must not.
-- Use an available port. The default is TCP 80; if occupied, setup offers an alternative such as 8080. Use the chosen port in every URL.
+- Use a Windows computer with Windows PowerShell 5.1 and administrator permission. Back up school resources.
+- Extract the complete ZIP. NGINX and NSSM are already included. 
+- Setup uses a window with coloured buttons. Normal setup does not require editing portal-settings.json.
+- Phones and computers use the server IP address and port. Computer renaming and hostname-discovery rules are disabled.
 
 ### Find the right file
 
@@ -23,42 +23,35 @@ Offline Learning Portal lets learners open resources in a browser using a school
 | Rebuild_Catalog.bat | Updates resource cards after changes |
 | Uninstall.bat | Offers preserve-files or full-removal options |
 
-The main service is OfflineLearningPortal. NSSM keeps NGINX running as a Windows service. Optional Kiwix is introduced in Guide 03 and is separate from this baseline.
+The portal uses one NGINX service, normally named OfflineLearningPortal. Optional Kiwix remains a separate service; choose different ports for separate services.
 
+## Install and share the IP link
 
-## Install once; choose the name deliberately
+### 1. Extract the ZIP
 
-### 1. Review settings before installation
+Right-click the ZIP and choose Extract All. Open the extracted portal folder.
 
-```
-"install_directory": "C:\\LearningPortal",
-"hostname": "Portal",
-"http_port": 80
-```
+### 2. Open setup
 
-This is an excerpt from portal-settings.json, not a complete JSON file. Keep JSON commas and boolean values valid. Destination paths use doubled backslashes in JSON. Choose a unique computer name up to 15 characters, beginning with a letter, with letters, digits or hyphens.
+Double-click Install.bat and approve the Windows administrator prompt. A setup window opens; you do not need to edit JSON for the normal settings.
 
-### 2. Start the installer
+### 3. Choose the folder and port
 
-- Right-click Install.bat and select Run as administrator. Review the destination, service name, HTTP port and firewall scope.
-- Type YES to continue. Setup creates NGINX runtime directories, validates configuration, installs/configures NSSM, adds rules, starts the service and checks the local catalogue.
-- At the rename prompt, type RENAME only to change the Windows computer name. Pressing Enter keeps the current name. A configured hostname does not create a DNS record.
-- If you accept renaming, restart Windows to complete the name change. Coordinate changes on managed school/domain computers with their administrator.
+Keep the displayed folder and port, or choose another. Click Check port. If the port is occupied, click Use available port to select a free alternative. The installer also rechecks the port before installing.
 
-### 3. Open the home page
+### 4. Install
 
-```
-http://localhost/
-http://SERVER-IP/
-http://ACTUAL-HOSTNAME/
-```
+Click Install portal. Wait for Installed successfully. Setup configures NGINX, the Windows service and the inbound HTTP firewall rule. It does not rename the computer.
 
-Replace SERVER-IP and ACTUAL-HOSTNAME with your actual values. If you chose port 8080, use http://SERVER-IP:8080/. On a learner phone, localhost means the phone itself: use the server IP or resolvable server name.
+### 5. Open and share the IP link
 
-### Read success accurately
+Click Open portal to check it on the server. Choose the school Wi-Fi or Ethernet address from LAN address, then click Copy device link. Open that link on phones or computers connected to the same school network. The port is included automatically when needed.
 
-A successful installer health check confirms a running service and local catalogue response. It does not by itself prove client access or name resolution. Editing portal-settings.json later does not apply changes to an installed server.
+### If port 80 is already used
 
+Use available port keeps other services running. For IIS, open IIS Manager > Sites > the site > Bindings, edit its HTTP binding to a free port such as 8082, update its links/firewall access, and recheck port 80. Other servers have their own listening-port settings.
+
+Stop IIS for port 80... requires confirmation and interrupts IIS web publishing. It is temporary: IIS may reclaim port 80 after a restart. Change the binding or use a different portal port for a lasting arrangement.
 
 ## Check the service, browser and removal
 
@@ -66,7 +59,6 @@ A successful installer health check confirms a running service and local catalog
 
 ```
 Get-Service OfflineLearningPortal
-hostname
 Get-NetIPAddress -AddressFamily IPv4 |
   Where-Object {$_.IPAddress -notlike '127.*'} |
   Select-Object InterfaceAlias,IPAddress
@@ -74,22 +66,21 @@ Get-NetTCPConnection -State Listen |
   Where-Object LocalPort -eq 80
 ```
 
-Expected: service status Running and a listener on your configured port. Choose the IP of the school Wi-Fi/Ethernet adapter, not a VPN or virtual adapter. With example IP 192.168.1.25, open http://192.168.1.25/ from a learner phone. Replace it with your actual IP; add :8080 if that is your chosen port.
+Expected: service status Running and a listener on your configured port. Choose the IP of the school Wi-Fi/Ethernet adapter, not a VPN or virtual adapter. With example IP 192.168.1.25, open http://192.168.1.25/ from a learner phone. Replace it with your actual IP; add :8080 if that is your chosen port. Substitute your configured service name and port in the commands when different.
 
 ### 2. Test restart and a resource
 
-Restart Windows. Open the portal without manually starting a service. Open a guide, use search, then add the worked example in Guide 02. Disconnect internet while keeping the school LAN connected and check again. IP works but name fails: check the actual hostname and school name resolution. Localhost works but a phone fails: check network profile, firewall scope and Wi-Fi client isolation.
+Restart Windows. Open the portal without manually starting a service. Open a guide, use search, then add the worked example in Guide 02. Disconnect internet while keeping the school LAN connected and check again. Localhost works but a phone fails: check network profile, firewall scope and Wi-Fi client isolation.
 
 ### 3. Back up and uninstall
 
-Back up web, portal-settings.json, installation.json and runtime/nginx/conf/portal.conf. Run the installed Uninstall.bat as administrator. Choose 1 to preserve files or 2 to delete the installation, then answer REMOVE and, for deletion, DELETE. The optional Kiwix service has separate removal steps in Guide 03.
+Back up web, portal-settings.json, installation.json and runtime/nginx/conf/portal.conf outside the installed folder. Open the installed Uninstall.bat and approve administrator access. Keep files removes the portal service/rules and retains resources. Delete everything also deletes the owned installation folder after a separate confirmation. Cancel starts no removal. Optional Kiwix has separate removal steps in Guide 03.
 
 If an old page remains visible, try an explicit http:// URL in a private window and check the listener output above. An old cached page is not evidence that a server is running. Retain logs and installation.json when troubleshooting a failed installation.
 
 ### Evidence and references
 
-The owner supplied Windows installation, local health, LAN IP access and full-removal evidence. New example code has preparation checks; this exact archive and optional Kiwix need local review. See docs/VALIDATION.md. NGINX Windows guidance: https://nginx.org/en/docs/windows.html ; NSSM: https://nssm.cc/usage .
-
+The owner confirmed that Windows testing of the interactive tools passed on their PC. Detailed individual logs were not supplied with that confirmation. See docs/VALIDATION.md and docs/INTERACTIVE_SETUP_TEST.md for the record and reproducible checks.
 
 ## 4. Find your way around the installed portal
 
@@ -108,7 +99,7 @@ C:\LearningPortal\Rebuild_Catalog.bat   Rebuild resource list
 
 ### Understand a browser address
 
-The Windows path C:\LearningPortal\web\resources\Activities\lesson-starter\index.html becomes http://localhost/resources/Activities/lesson-starter/index.html on the server. web is the server document root and is omitted from the URL. On a learner device replace localhost with the server IP or working hostname. A browser URL uses forward slashes; a Windows path normally uses backslashes.
+The Windows path C:\LearningPortal\web\resources\Activities\lesson-starter\index.html becomes http://localhost/resources/Activities/lesson-starter/index.html on the server. web is the server document root and is omitted from the URL. On a learner device replace localhost with the server IP address. A browser URL uses forward slashes; a Windows path normally uses backslashes.
 
 ### Before editing
 
@@ -121,5 +112,3 @@ The Windows path C:\LearningPortal\web\resources\Activities\lesson-starter\index
 
 Guide 02 builds a fresh local lesson using HTML, CSS and JavaScript, then adds media and optional Python. Guide 03 adds an independent Kiwix server and explains downloading its software and ZIM files. Neither requires the author's earlier portal code. Work through one page at a time and check the stated result before continuing.
 
-
-Creator contact: Tirtharaj Dhungana <tirtharajdhungana84@gmail.com>.

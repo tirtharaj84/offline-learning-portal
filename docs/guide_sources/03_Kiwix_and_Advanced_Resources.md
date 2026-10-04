@@ -1,6 +1,6 @@
 # Extend with Kiwix and advanced resources
 
-Offline Learning Portal v1.0.0 | Copyright 2026 Tirtharaj Dhungana | MIT
+Offline Learning Portal v1.1.0 | Copyright 2026 Tirtharaj Dhungana | MIT
 
 ## 1. Understand the optional Kiwix extension
 

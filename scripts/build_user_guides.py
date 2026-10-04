@@ -48,7 +48,7 @@ class NumberedCanvas(canvas.Canvas):
  def save(self):
   total=len(self.states)
   for state in self.states:
-   self.__dict__.update(state);self.setStrokeColor(colors.HexColor('#cbd9df'));self.line(48,43,547,43);self.setFont('Guide',7.4);self.setFillColor(INK);self.drawString(48,29,'Tirtharaj Dhungana | MIT | Offline Learning Portal v1.0.0');self.drawString(48,17,'Contact: tirtharajdhungana84@gmail.com');self.drawRightString(547,29,f'{self._pageNumber} / {total}');super().showPage()
+   self.__dict__.update(state);self.setStrokeColor(colors.HexColor('#cbd9df'));self.line(48,43,547,43);self.setFont('Guide',7.4);self.setFillColor(INK);self.drawString(48,29,'Tirtharaj Dhungana | MIT | Offline Learning Portal 1.1.0');self.drawString(48,17,'Contact: tirtharajdhungana84@gmail.com');self.drawRightString(547,29,f'{self._pageNumber} / {total}');super().showPage()
   super().save()
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--font-dir');args=ap.parse_args();fonts(args.font_dir)
