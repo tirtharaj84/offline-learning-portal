@@ -1,10 +1,11 @@
 cff-version: 1.2.0
-message: "If you use this software, cite version 1.1.0 using the release URL or its Zenodo version DOI when published."
+message: "If you use this software, cite version 1.1.0 using its Zenodo DOI."
 title: "Offline Learning Portal"
 authors:
   - family-names: Dhungana
     given-names: Tirtharaj
 version: 1.1.0
+doi: 10.5281/zenodo.23131009
 date-released: 2026-10-04
 url: https://github.com/tirtharaj84/offline-learning-portal/releases/tag/v1.1.0
 repository-code: https://github.com/tirtharaj84/offline-learning-portal

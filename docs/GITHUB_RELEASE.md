@@ -27,4 +27,5 @@ Preparation checks passed: seven PowerShell files parsed under PowerShell 7.4.6 
 The bundled NGINX/NSSM executable bytes and resource catalogue baseline are retained. Guides, metadata and technical records were updated for v1.1.0. Original project files use MIT; retain third-party notices.
 
 GitHub release: https://github.com/tirtharaj84/offline-learning-portal/releases/tag/v1.1.0
+Zenodo version DOI: https://doi.org/10.5281/zenodo.23131009
 Creator: Tirtharaj Dhungana — tirtharajdhungana84@gmail.com.

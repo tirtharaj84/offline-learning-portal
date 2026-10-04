@@ -1,5 +1,7 @@
 # Offline Learning Portal - v1.1.0
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23131009.svg)](https://doi.org/10.5281/zenodo.23131009)
+
 The project owner confirmed that testing of the interactive installation and removal tools passed on their Windows PC. The technical record distinguishes this report from portable preparation checks. See `docs/VALIDATION.md`.
 
 NGINX serves a local resource catalogue and files over the school LAN. NSSM runs it as a Windows service. The setup window provides folder/port controls, an activity indicator, installation output, a local Open portal button and a Copy device link button. Phones and computers use the server's IP address and selected port. Computer renaming and hostname discovery are disabled.
@@ -66,7 +68,7 @@ Original files use MIT; keep `LICENSE.txt`, `LICENSE_STATUS.md`, `THIRD_PARTY_NO
 
 Repository: https://github.com/tirtharaj84/offline-learning-portal
 
-Published v1.0.0 baseline DOI: https://doi.org/10.5281/zenodo.23120387. That DOI identifies the earlier v1.0.0 release.
+Zenodo DOI for version 1.1.0: https://doi.org/10.5281/zenodo.23131009. The earlier v1.0.0 release remains available at https://doi.org/10.5281/zenodo.23120387.
 
 The package includes SHA256SUMS.txt for all distributed files except the manifest itself.
 
