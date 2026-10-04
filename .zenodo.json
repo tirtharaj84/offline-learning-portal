@@ -1,14 +1,13 @@
 {
   "title": "Offline Learning Portal",
   "upload_type": "software",
-  "description": "A Windows school LAN resource portal using NGINX and NSSM, with configurable installation, a local resource catalogue, three illustrated user guides and uninstall options. Optional Kiwix integration is documented but is not bundled or newly Windows-tested. See included validation and third-party notices. Creator/contact: Tirtharaj Dhungana, tirtharajdhungana84@gmail.com. Includes 4-, 10- and 10-page novice manuals and complete original lesson examples.",
+  "description": "Offline Learning Portal v1.1.0: a Windows school LAN resource portal with interactive NGINX/NSSM installation and removal, free-port selection, IP-and-port device links, a local catalogue and three user guides. Windows acceptance was confirmed by the creator; portable checks and evidence boundaries are documented. Original files use MIT; bundled components retain their notices. Optional Kiwix is separately configured. Creator/contact: Tirtharaj Dhungana, tirtharajdhungana84@gmail.com. AI assistance is acknowledged in ACKNOWLEDGEMENTS.md.",
   "creators": [
     {
       "name": "Dhungana, Tirtharaj"
     }
   ],
-  "version": "1.0.0",
-  "publication_date": "2026-10-03",
+  "version": "1.1.0",
   "license": "MIT",
   "keywords": [
     "offline learning",
@@ -17,5 +16,6 @@
     "NGINX",
     "NSSM",
     "Kiwix"
-  ]
+  ],
+  "publication_date": "2026-10-04"
 }
